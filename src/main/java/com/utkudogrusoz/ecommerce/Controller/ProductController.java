@@ -7,6 +7,7 @@ import com.utkudogrusoz.ecommerce.Model.ProductModel;
 import com.utkudogrusoz.ecommerce.Service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,16 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<String>("cannot update", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping(path = "/updatePatch/{id}")
+    public ResponseEntity<String> updatePatch(@PathVariable("id") Long id, @RequestBody ProductUpdateRequest updateRequest) {
+        try {
+            productService.updateProduct(id, updateRequest);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<String>("cannot update with patch", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -115,5 +126,10 @@ public class ProductController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Resim yüklenemedi.");
         }
+    }
+
+    @RequestMapping(value = "options", method = RequestMethod.OPTIONS)
+    public ResponseEntity<String> options() {
+        return ResponseEntity.ok().allow(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS, HttpMethod.POST, HttpMethod.PATCH).build();
     }
 }
